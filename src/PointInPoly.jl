@@ -33,7 +33,6 @@ function pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y:
     # c = 0: inside, 1: outside
     return c
 end
-
-
+export pinpoly  
 
 end
