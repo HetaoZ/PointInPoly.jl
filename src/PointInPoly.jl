@@ -30,7 +30,6 @@ function pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y:
             c = 1 - c
         end
     end
-    # c = 0: inside, 1: outside
     return c
 end
  
