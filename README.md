@@ -17,11 +17,12 @@ Check if a point lies in a 2D polygon (available) or a 3D polyhedron (planned, c
 using PointInPoly
 
 # rectangle
-polyX = [0 1 1 0]
-polyY = [0 0 1 1]
+polyX = [0, 1, 1, 0]
+polyY = [0, 0, 1, 1]
 pointX = 0.5
 pointY = 0.2
 
 # returns 0 if the point is inside, otherwise 1.
+pinpoly(polyX, polyY, pointX, pointY)
 pinpoly(polyX, polyY, pointX, pointY)
 ```
