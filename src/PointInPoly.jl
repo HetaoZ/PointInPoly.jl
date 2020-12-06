@@ -33,13 +33,7 @@ function pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y:
     return c
 end
  
-function pinline(X1::Real, Y1::Real, X2::Real, Y2::Real, x::Real, y::Real)
-    if (x - X1) * (Y2 - Y1) == (y - Y1) * (X2 - X1) && x <= max(X1, X2) && x >= min(X1, X2)
-        return true
-    else
-        return false
-    end
-end
+pinline(X1::Real, Y1::Real, X2::Real, Y2::Real, x::Real, y::Real) = (x - X1) * (Y2 - Y1) == (y - Y1) * (X2 - X1) && x <= max(X1, X2) && x >= min(X1, X2)
 
 function pinpoly(xs::Array, point::Vector)
     if size(xs, 2) == 1
