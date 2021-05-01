@@ -9,13 +9,15 @@
 
 Check if a point lies in a 2D polygon (available) or a 3D polyhedron (planned, currently not available). Return 1 if inside, 0 if outside, -1 if exactly on the edge. 
 
+`pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y::Real)`
+
 `vertices_x`/`vertices_y`: Vector of `x`/`y` of the polygon vertices. Note that `x[end] ≠ x[1]` (very important).
  
 `point_x`/`point_y`: `x`/`y` of the point.
 
 This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html. Extension to "3D point in polyhedron" is still in plan.
 
-# Install
+# Installation
 ```
 ] add https://github.com/HetaoZ/PointInPoly.jl.git
 ```

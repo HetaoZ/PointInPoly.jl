@@ -4,6 +4,8 @@ export pinpoly
 """
 Check if a point lies inside a 2D polygon. Return 1 if inside, 0 if outside, -1 if exactly on the edge. 
 
+`pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y::Real)`
+
 `vertices_x`/`vertices_y`: Vector of `x`/`y` of the polygon vertices. Note that `x[end] != x[1]` (very important).
  
 `point_x`/`point_y`: `x`/`y` of the point.
