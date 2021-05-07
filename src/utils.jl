@@ -7,3 +7,14 @@ function cross_product(a::Vector{T} where T <: Number, b::Vector{T} where T <: N
         error("undef dim")
     end
 end
+
+function betweeneq(p::NTuple{3,Float64}, point1::NTuple{3,Float64}, point2::NTuple{3,Float64})
+    ans = true
+    for i = 1:3
+        if !(point1[i] <= p[i] <= point2[i])
+            ans = false
+            break
+        end
+    end
+    return ans
+end
