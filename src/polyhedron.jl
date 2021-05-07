@@ -116,6 +116,3 @@ function pcrossface(nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC:
     # 已知射线与三角形平面的交点在三角形内（不包括边上），且射线起点不在三角形平面内。
     return 1     
 end
-
-
-
