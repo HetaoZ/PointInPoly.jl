@@ -30,7 +30,7 @@ Determine whether a point lies inside a 3D polyhedron. Return 1 if inside, 0 if 
 
 This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html.
 """  
-function pinpoly(node_x::NTuple{N,Float64}, node_y::NTuple{N,Float64}, node_z::NTuple{N,Float64}, faces::NTuple{N,NTuple{3,Int}}, point::NTuple{3, Float64}) where N
+function pinpoly(node_x::NTuple{N,Float64}, node_y::NTuple{N,Float64}, node_z::NTuple{N,Float64}, faces::NTuple{M,NTuple{3,Int}}, point::NTuple{3, Float64}) where N where M
     # Check if the point is out of the bounding box.
     if !between(point, (minimum(node_x), minimum(node_y), minimum(node_z)), (maximum(node_x), maximum(node_y), maximum(node_z)))
         return 0
