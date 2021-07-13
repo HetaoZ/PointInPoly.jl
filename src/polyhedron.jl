@@ -6,16 +6,7 @@ const BIAS = EPS * [ 0.09816024370339371,  0.6196549438024468,  0.97554182074717
     return Float64[a[2]*b[3]-b[2]*a[3], a[3]*b[1]-a[1]*b[3], a[1]*b[2]-b[1]*a[2]] 
 end
 
-function between(p::NTuple{3,Float64}, point1::NTuple{3,Float64}, point2::NTuple{3,Float64})
-    ans = true
-    for i = 1:3
-        if !(point1[i] < p[i] < point2[i])
-            ans = false
-            break
-        end
-    end
-    return ans
-end
+
 
 """
 Determine whether a point lies inside a 3D polyhedron. Return 1 if inside, 0 if outside or exactly on the boundary. 
@@ -59,7 +50,17 @@ function pinpoly(node_x::NTuple{N,Float64}, node_y::NTuple{N,Float64}, node_z::N
     return c
 end
 
+function face_beyond_box_of_ray(nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64}, point::NTuple{3, Float64}) 
+    Y = minimum((nodeA[2],nodeB[2],nodeC[2]))<=point[2]<=maximum((nodeA[2],nodeB[2],nodeC[2]))
+    Z = minimum((nodeA[3],nodeB[3],nodeC[3]))<=point[3]<=maximum((nodeA[3],nodeB[3],nodeC[3]))
+    return !(Y && Z)
+end
+
 function pcrossface(nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64}, point::NTuple{3, Float64})
+
+    if face_beyond_box_of_ray(nodeA, nodeB, nodeC, point)
+        return 0
+    end
 
     node1 = collect(nodeA)
     node2 = collect(nodeB)
