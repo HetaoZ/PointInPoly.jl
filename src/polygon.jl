@@ -1,30 +1,30 @@
 """
 Check if a point lies inside a 2D polygon. Return 1 if inside, 0 if outside, -1 if exactly on the edge. 
 
-`pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y::Real)`
+`pinpoly(vertices_x::NTuple{N,Float64}, vertices_y::NTuple{N,Float64}, point::NTuple{2, Float64}) where N
+`
 
 `vertices_x`/`vertices_y`: Vector of `x`/`y` of the polygon vertices. Note that `x[end] != x[1]` (very important).
  
-`point_x`/`point_y`: `x`/`y` of the point.
+`point[1]`/`point[2]`: `x`/`y` of the point.
 
-This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html. Extension to "3D point in polyhedron" is still in plan.
+This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html.
 """  
-function pinpoly(vertices_x::Vector, vertices_y::Vector, point_x::Real, point_y::Real)
-    nvert = length(vertices_x)
-    VertX = [vertices_x; vertices_x[1]]
-    VertY = [vertices_y; vertices_y[1]]
-    for i = 1:nvert
-        if pinline(VertX[i], VertY[i], VertX[i+1], VertY[i+1], point_x, point_y)
+function pinpoly(vertices_x::NTuple{N,Float64}, vertices_y::NTuple{N,Float64}, point::NTuple{2, Float64}) where N
+    VertX = [collect(vertices_x); vertices_x[1]]
+    VertY = [collect(vertices_y); vertices_y[1]]
+    for i = 1:N
+        if pinline(VertX[i], VertY[i], VertX[i+1], VertY[i+1], point[1], point[2])
             return -1
         end
     end
-    if ( (point_x < minimum(VertX)) || (point_x > maximum(VertX)) || (point_y < minimum(VertY)) || (point_y > maximum(VertY)) )
+    if ( (point[1] < minimum(VertX)) || (point[1] > maximum(VertX)) || (point[2] < minimum(VertY)) || (point[2] > maximum(VertY)) )
         return 0
     end
     c = 0
-    for i = 1:nvert
+    for i = 1:N
         j = i + 1
-        if ( (VertY[i] > point_y) ⊻ (VertY[j] > point_y ) ) && ( point_x < (VertX[j] - VertX[i]) * (point_y - VertY[i]) / (VertY[j] - VertY[i]) + VertX[i] )
+        if ( (VertY[i] > point[2]) ⊻ (VertY[j] > point[2] ) ) && ( point[1] < (VertX[j] - VertX[i]) * (point[2] - VertY[i]) / (VertY[j] - VertY[i]) + VertX[i] )
             # ⊻ : \xor
             c = 1 - c
         end
