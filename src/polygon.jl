@@ -40,18 +40,3 @@ function pinline(X1::Real, Y1::Real, X2::Real, Y2::Real, x::Real, y::Real)
     end
 end
 
-# function pinpoly(xs::Array, point::Vector)
-#     if size(xs, 2) == 1
-#         if point[1] < maximum(xs) && point[1] > minimum(xs)
-#             return 1
-#         elseif point[1] in xs
-#             return -1
-#         else
-#             return 0
-#         end
-#     elseif size(xs, 2) == 2
-#         return pinpoly(xs[:,1], xs[:,2], point)
-#     else
-#         error("undef")
-#     end
-# end
