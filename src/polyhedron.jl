@@ -22,18 +22,14 @@ function pinpoly(vertices_x::NTuple{N,Float64}, vertices_y::NTuple{N,Float64}, v
     end
 
     c = 0
-    for i in eachindex(faces)
-        face = faces[i]
+    for face in faces
         intersection = pcrossface(
             (vertices_x[face[1]], vertices_y[face[1]], vertices_z[face[1]]), 
             (vertices_x[face[2]], vertices_y[face[2]], vertices_z[face[2]]), 
             (vertices_x[face[3]], vertices_y[face[3]], vertices_z[face[3]]), 
             point
             )
-        # println(intersection)
-        # println(((vertices_x[face[1]], vertices_y[face[1]], vertices_z[face[1]]), 
-        # (vertices_x[face[2]], vertices_y[face[2]], vertices_z[face[2]]), 
-        # (vertices_x[face[3]], vertices_y[face[3]], vertices_z[face[3]])))
+
         if intersection == -1
             return -1
         end

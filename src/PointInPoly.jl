@@ -1,4 +1,5 @@
 module PointInPoly
+using LinearAlgebra
 export pinpoly 
 
 include("polygon.jl")
