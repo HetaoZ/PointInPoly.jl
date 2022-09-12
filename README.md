@@ -5,13 +5,19 @@
 [![Build Status](https://github.com/HetaoZ/PointInPoly.jl/workflows/CI/badge.svg)](https://github.com/HetaoZ/PointInPoly.jl/actions)
 [![Coverage](https://codecov.io/gh/HetaoZ/PointInPoly.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/HetaoZ/PointInPoly.jl)
 
-Determine whether a point lies inside a 2D polygon or a 3D polyhedron. Note that there is a bit difference between 2D and 3D cases.
+Determine if a point lies inside a 1D segment/2D polygon/3D polyhedron. Return 1 if inside, 0 if outside, -1 if exactly on any face. 
 
-For a 2D polygon, return 1 if inside, 0 if outside, -1 if exactly on the edge. 
+    pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{dim,Float64}}}, start::NTuple{dim,Float64}, stop::NTuple{dim,Float64}) where N where dim
+    
+`faces`: Tuples of the node position of all `face`s on the boundary. A `face` is referred to a node/segment/triangle in 1/2/3D space, and its normal vector must be outward.
 
-For a 3D polyhedron, return 1 if inside, 0 if outside OR exactly on the edge. The detection for 'exactly on the edge' is being developed.
+`point`: Position of the point.
 
-This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html. 
+`start`: The minimum coordinates among all nodes
+
+`stop`: The maximum coordinates among all nodes
+
+This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html.
 
 # Installation
 ```
@@ -23,26 +29,30 @@ This algorithm was proposed by W. Randolph Franklin: https://wrf.ecse.rpi.edu//R
 ```
 using PointInPoly
 
-# coordinates of polygon vertices, in clockwise or anti-clockwise sequence.
-polyX = [0, 1, 1, 0]
-polyY = [0, 0, 1, 1]
+# coordinates of polygon vertices
+P = ((0., 0.), (1., 0.), (1., 1.), (0., 1.))
+faces = ((P[1], P[2]), (P[2], P[3]), (P[3], P[4]), (P[4], P[1])
+start = (0., 0.)
+stop = (1., 1.)
 
 # point
-pointX = 0.5
-pointY = 0.2
+point = (0.5, 0.2)
 
 # check
-pinpoly(polyX, polyY, pointX, pointY)
+pinpoly(point, faces, start, stop)
 ```
 ## 3D polyhedron
 ```
 using PointInPoly
 
-node_x = Tuple(Float64[0,1,0,0])
-node_y = Tuple(Float64[0,0,1,0])
-node_z = Tuple(Float64[0,0.001,0,1])
-
-faces  = ((1,2,3), (1,2,4), (2,3,4), (1,3,4))
+P = ((0., 0., 0.),
+    (1., 0., 0.),
+    (0., 1., 0.),
+    (0., 0., 1.))
+faces  = ((P[1],P[3],P[2]), 
+        (P[1],P[2],P[4]), 
+        (P[2],P[3],P[4]), 
+        (P[3],P[1],P[4]))
 
 points = (
     (0.01, 0.01, 0.01), 
