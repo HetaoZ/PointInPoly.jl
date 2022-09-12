@@ -1,7 +1,5 @@
 module PointInPoly
 export pinpoly 
 
-include("polygon.jl")
-include("polyhedron.jl")
-include("utils.jl")
+include("pinpoly.jl")
 end
