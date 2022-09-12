@@ -31,15 +31,22 @@ using PointInPoly
 
 # coordinates of polygon vertices
 P = ((0., 0.), (1., 0.), (1., 1.), (0., 1.))
-faces = ((P[1], P[2]), (P[2], P[3]), (P[3], P[4]), (P[4], P[1])
+faces = ((P[1], P[2]), (P[2], P[3]), (P[3], P[4]), (P[4], P[1]))
 start = (0., 0.)
 stop = (1., 1.)
 
 # point
-point = (0.5, 0.2)
+points = ((0.5, 0.2),
+        (-0.4, 0.3),
+        (0., 0.25),
+        (0.7, -1.1),
+        (0.1, 0.),
+        (1.0, 1.0))
 
 # check
-pinpoly(point, faces, start, stop)
+for point in points
+    println(point, " => ", pinpoly(point, faces, start, stop))
+end
 ```
 ## 3D polyhedron
 ```
@@ -53,6 +60,8 @@ faces  = ((P[1],P[3],P[2]),
         (P[1],P[2],P[4]), 
         (P[2],P[3],P[4]), 
         (P[3],P[1],P[4]))
+start = (0., 0., 0.)
+stop = (1., 1., 1.)
 
 points = (
     (0.01, 0.01, 0.01), 
@@ -64,6 +73,6 @@ points = (
     )
 
 for point in points
-    println(point," => ", pinpoly(node_x, node_y, node_z, faces, point))
+    println(point," => ", pinpoly(point, faces, start, stop))
 end
 ```

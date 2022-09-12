@@ -1,18 +1,32 @@
 include("../src/PointInPoly.jl")
+using .PointInPoly
 
-node_x=Tuple(Float64[0,1,0,0])
-node_y=Tuple(Float64[0,0,1,0])
-node_z=Tuple(Float64[0,0.001,0,1])
-faces = ((1,2,3), (1,2,4), (2,3,4), (1,3,4))
-points = (
-    (0.01, 0.01, 0.01), 
-    (0.01,0.01,0.), 
-    (0.01, 0.01, -0.01), 
-    (0., 0., 0.5), 
-    (0., 0.1, 0.1), 
-    (0., 0., 1.1)
+P = (
+    (0., 0., 0.),
+    (1., 0., 0.),
+    (0., 1., 0.),
+    (0., 0., 1.)
     )
+faces = (
+    (P[1], P[3], P[2]), 
+    (P[1], P[2], P[4]), 
+    (P[2], P[3], P[4]), 
+    (P[3], P[1], P[4])
+    )
+start = (0., 0., 0.)
+stop = (1., 1., 1.)
+
+# points = (
+#     ( 0.1,  0.1,  0.01), 
+#     ( 0.1,  0.1,    0.), 
+#     ( 0.1,  0.1,  -0.1), 
+#     (  0.,   0.,   0.5), 
+#     (  0.,  0.1,   0.1), 
+#     (  0.,   0.,   1.1)
+#     )
+
+points = ((( 0.1,  0.1,    0.)),)
 
 for point in points
-    println(point," -> ", PointInPoly.pinpoly(node_x, node_y, node_z, faces, point))
+    println(point," => ", pinpoly(point, faces, start, stop))
 end
