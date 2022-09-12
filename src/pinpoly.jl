@@ -23,7 +23,6 @@ function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{d
             for face in faces
                 # ray starting from +∞ and stoping at the point
                 intersection = ray_intersect_face(point, face...)
-                println("face = ", face,"  inter = ", intersection)
                 if intersection == 1  # face and the ray are intersected
                     c = 1 - c
                 else
@@ -64,15 +63,8 @@ const RAN = (0.59816024370339371,  0.6196549438024468,  0.4755418207471769)
 const BIAS = EPS .* RAN
 const D = INF .* collect(RAN)  # 三维射线的无穷远端
 
-# "return 1: intersected, 0: not intersected, -1: point just in face"
-# function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
-
-# end
-
 "return 1: intersected, 0: not intersected, -1: point just in face"
 function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
-    # ----------------------------------------------------------------------------------------
-    println("1")
 
     if face_beyond_box_of_ray(point, nodeA, nodeB, nodeC)
         return 0
@@ -92,8 +84,6 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
 
     # ----------------------------------------------------------------------------------------
     # If the determinant is near zero, the ray lies parallel to the plane of the triangle.
-    # ----------------------------------------------------------------------------------------
-    println("2")
 
     if abs(det) == 0.0
         # 已知射线与三角形共面，即参数t无穷大。
@@ -105,9 +95,6 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
         return 0
     end
 
-    println("3")
-
-
     inv_det = 1.0 / det
     T = O - node1
     u = T' * P * inv_det
@@ -115,17 +102,11 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
         return 0
     end
 
-    println("4")
-
-
     Q = cross(T, e1)
     v = D' * Q * inv_det
     if v < 0.0 || u + v > 1.0
         return 0
     end
-
-    println("5")
-
 
     # 已知射线与三角形平面的交点不在三角形外。
     t = e2' * Q * inv_det
@@ -133,20 +114,15 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
     if t < 0.
         return 0
     end
-    println("6")
 
     if t == 0.
         return -1
     end
 
-    println("7")
-
-
     # 已知射线与三角形平面的交点不在三角形外，且射线起点不在三角形平面内。
     if u == 0.0 || v == 0.0 || u+v == 1.0
         return ray_intersect_face(point .+ BIAS, nodeA, nodeB, nodeC)
     end
-    println("8")
 
     # 已知射线与三角形平面的交点在三角形内（不包括边上），且射线起点不在三角形平面内。
     return 1     
