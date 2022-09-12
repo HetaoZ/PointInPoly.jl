@@ -60,8 +60,14 @@ end
 
 const INF = 1.0e14
 const EPS = 1.0e-9
-const BIAS = EPS .* (0.59816024370339371,  0.6196549438024468,  0.4755418207471769)
-const D = Float64[INF, 0., 0.]
+const RAN = (0.59816024370339371,  0.6196549438024468,  0.4755418207471769)
+const BIAS = EPS .* RAN
+const D = INF .* collect(RAN)  # 三维射线的无穷远端
+
+# "return 1: intersected, 0: not intersected, -1: point just in face"
+# function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
+
+# end
 
 "return 1: intersected, 0: not intersected, -1: point just in face"
 function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
