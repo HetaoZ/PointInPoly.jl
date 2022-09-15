@@ -61,6 +61,7 @@ function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{d
             for face in faces
                 # ray starting from +∞ and stoping at the point
                 intersection = ray_intersect_face(point, face...)
+                # println(face, " => ", intersection)
                 if intersection == 1  # face and the ray are intersected
                     c = 1 - c
                 else
@@ -97,9 +98,12 @@ end
 
 const INF = 1.0e10
 const EPS = 1.0e-10
-const RAN = (0.59816024370339371,  0.196549438024468,  0.4755418207471769)
+const RAN = (0.00006024370339371,  0.196549438024468,  0.4755418207471769)
 const BIAS = EPS .* RAN
-const D = INF .* collect(RAN)  # 三维射线的无穷远端
+# const D = INF .* collect(RAN)  # 三维射线的无穷远端
+const D = [INF, 0., 0.]
+const Dinv = [-INF, 0., 0.]
+const D2 = INF .* collect(RAN)
 
 "return 1: intersected, 0: not intersected, -1: point just in face"
 function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
@@ -125,12 +129,11 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
 
     if abs(det) == 0.0
         # 已知射线与三角形共面，即参数t无穷大。
-        # Determine if the point is in the triangle.
-        # if pintriangle(node1, node2, node3, point) != 0
-        #     return -1
-        # end
-        
-        return 0
+        if pintriangle(O, node1, node2, node3)  # Determine if the point is in the triangle.
+            return -1
+        else        
+            return 0
+        end
     end
 
     inv_det = 1.0 / det
@@ -152,7 +155,7 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
     if t < 0.
         return 0
     end
-
+    # 交点恰好是射线起点
     if t == 0.
         return -1
     end
@@ -164,6 +167,18 @@ function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}
 
     # 已知射线与三角形平面的交点在三角形内（不包括边上），且射线起点不在三角形平面内。
     return 1     
+end
+
+function pintriangle(point, node1, node2, node3)
+    B = dot(Dinv, cross(node2 - node1, node3 - node1))
+    if B == 0.
+        v = cross(D2, point - node1) / dot(D2, cross(node2 - node1, node3 - node1))
+    else
+        v = cross(Dinv, point - node1) / B
+    end
+    λ2 = dot(node3 - node1, v)
+    λ3 = - dot(node2 - node1, v)
+    return 0.0 ≤ λ2 ≤ 1.0 && 0.0 ≤ λ3 ≤ 1.0
 end
 
 function face_beyond_box_of_ray(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64}) 
