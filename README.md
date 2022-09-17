@@ -25,7 +25,7 @@ References
 
 # Installation
 ```
-] add https://github.com/HetaoZ/PointInPoly.jl.git
+] add PointInPoly
 ```
 
 # Usage
