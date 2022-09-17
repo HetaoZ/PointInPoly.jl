@@ -68,10 +68,9 @@ function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{d
     else
         c = 0
         if betweeneq(point, start, stop)
-            for face in faces
+            for (iface,face) in enumerate(faces)
                 # ray starting from +∞ and stoping at the point
                 intersection = ray_intersect_face(point, face...)
-                # println(face, " => ", intersection)
                 if intersection == 1  # face and the ray are intersected
                     c = 1 - c
                 else
@@ -143,7 +142,7 @@ function segment_intersect_face(p, q, a, b, c, normal)
             m = mixed_product(qp,ab,ac)
             λ2 = mixed_product(ac,qp,ap)/m
             λ3 = mixed_product(-ab,qp,ap)/m
-            return (0. ≤ λ2 ≤ 1. && 0. ≤ λ3 ≤ 1.) ? 1 : 0
+            return (0. ≤ λ2  && 0. ≤ λ3  && λ2 + λ3 ≤ 1.) ? 1 : 0
         else
             return 0
         end
