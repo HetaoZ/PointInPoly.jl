@@ -1,11 +1,4 @@
-const INF = 1.0e10
-const EPS = 1.0e-10
-const RAN = (0.00006024370339371,  0.196549438024468,  0.4755418207471769)
-const BIAS = EPS .* RAN
-# const D = INF .* collect(RAN)  # 三维射线的无穷远端
-const D = [INF, 0., 0.]
-const Dinv = [-INF, 0., 0.]
-const D2 = INF .* collect(RAN)
+const D = [1.0e10, 0., 0.]
 
 
 """
