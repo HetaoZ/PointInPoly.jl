@@ -1,7 +1,7 @@
 name = "PointInPoly"
 uuid = "b33f1834-3304-4c26-96eb-60ff7015163d"
 authors = ["walnutzh@163.com."]
-version = "1.0.0"
+version = "1.1.0"
 
 [compat]
 julia = "1.5"
