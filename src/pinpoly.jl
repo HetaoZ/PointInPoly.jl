@@ -1,3 +1,13 @@
+const INF = 1.0e10
+const EPS = 1.0e-10
+const RAN = (0.00006024370339371,  0.196549438024468,  0.4755418207471769)
+const BIAS = EPS .* RAN
+# const D = INF .* collect(RAN)  # 三维射线的无穷远端
+const D = [INF, 0., 0.]
+const Dinv = [-INF, 0., 0.]
+const D2 = INF .* collect(RAN)
+
+
 """
 Determine if a point lies inside a 1D segment/2D polygon/3D polyhedron. Return 1 if inside, 0 if outside, -1 if exactly on any face. 
 
@@ -75,6 +85,11 @@ function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{d
     end
 end
 
+@inline function betweeneq(a::NTuple{dim,Float64}, lo::NTuple{dim,Float64}, hi::NTuple{dim,Float64}) where dim
+    return all(lo .≤ a .≤ hi)
+end
+
+"1D intersection, return 1: intersected, 0: not intersected, -1: point just in face"
 function pinsegment(point::Float64, start::Float64, stop::Float64)
     if start < point < stop
         return 1
@@ -85,8 +100,8 @@ function pinsegment(point::Float64, start::Float64, stop::Float64)
     end
 end
 
-"return 1: intersected, 0: not intersected, -1: point just in face"
-function ray_intersect_face(X::NTuple{2,Float64}, P1::NTuple{2,Float64}, P2::NTuple{2,Float64})
+"2D intersection, return 1: intersected, 0: not intersected, -1: point just in face"
+function ray_intersect_face(X, P1, P2)
     # ⊻ : \xor
     if (X[1] - P1[1]) * (P2[2] - P1[2]) == (X[2] - P1[2]) * (P2[1] - P1[1]) && min(P1[1], P2[1]) <= X[1] <= max(P1[1], P2[1])
         return -1
@@ -96,100 +111,46 @@ function ray_intersect_face(X::NTuple{2,Float64}, P1::NTuple{2,Float64}, P2::NTu
     end
 end
 
-const INF = 1.0e10
-const EPS = 1.0e-10
-const RAN = (0.00006024370339371,  0.196549438024468,  0.4755418207471769)
-const BIAS = EPS .* RAN
-# const D = INF .* collect(RAN)  # 三维射线的无穷远端
-const D = [INF, 0., 0.]
-const Dinv = [-INF, 0., 0.]
-const D2 = INF .* collect(RAN)
+"3D intersection, return 1: intersected, 0: not intersected, -1: point just in face"
+function ray_intersect_face(point, a, b, c)
+    point, a, b, c = collect.((point, a, b, c))
+    normal = normalize(cross( b .- a, c .- a ))
+    return segment_intersect_face(point, D, a, b, c, normal)
+end
 
-"return 1: intersected, 0: not intersected, -1: point just in face"
-function ray_intersect_face(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64})
-
-    if face_beyond_box_of_ray(point, nodeA, nodeB, nodeC)
-        return 0
-    end
-
-    node1 = collect(nodeA)
-    node2 = collect(nodeB)
-    node3 = collect(nodeC)
-    O = collect(point)
-
-    e1 = node2 - node1
-    e2 = node3 - node1
-
-    P = cross(D, e2)
-
-    det = e1' * P
-
-    # ----------------------------------------------------------------------------------------
-    # If the determinant is near zero, the ray lies parallel to the plane of the triangle.
-
-    if abs(det) == 0.0
-        # 已知射线与三角形共面，即参数t无穷大。
-        if pintriangle(O, node1, node2, node3)  # Determine if the point is in the triangle.
+"[@ref] https://blog.csdn.net/u012138730/article/details/80235813"
+function segment_intersect_face(p, q, a, b, c, normal)
+    qp = p .- q  # p = point
+    Δ = dot(qp, normal)
+    if Δ == 0.
+        ap = p .- a
+        t = dot(ap, normal)
+        if t == 0.
+            M = hcat(b .- a, c .- a, normal)
+            λ = M \ ap
+            return (0. ≤ λ[1] && 0. ≤ λ[2] && (λ[1] + λ[2]) ≤ 1. ) ? -1 : 0
+        else
+            return 0
+        end
+    else
+        ap = p .- a
+        t = dot(ap, normal) / Δ
+        if t == 0.
             return -1
-        else        
+        elseif 0. < t ≤ 1.0
+            ab = b .- a
+            ac = c .- a
+            m = mixed_product(qp,ab,ac)
+            λ2 = mixed_product(ac,qp,ap)/m
+            λ3 = mixed_product(-ab,qp,ap)/m
+            return (0. ≤ λ2 ≤ 1. && 0. ≤ λ3 ≤ 1.) ? 1 : 0
+        else
             return 0
         end
     end
-
-    inv_det = 1.0 / det
-    T = O - node1
-    u = T' * P * inv_det
-    if u < 0.0 || u > 1.0
-        return 0
-    end
-
-    Q = cross(T, e1)
-    v = D' * Q * inv_det
-    if v < 0.0 || u + v > 1.0
-        return 0
-    end
-
-    # 已知射线与三角形平面的交点不在三角形外。
-    t = e2' * Q * inv_det
-    #注意射线是单向的，排除反向相交情况。
-    if t < 0.
-        return 0
-    end
-    # 交点恰好是射线起点
-    if t == 0.
-        return -1
-    end
-
-    # 已知射线与三角形平面的交点不在三角形外，且射线起点不在三角形平面内。
-    if u == 0.0 || v == 0.0 || u+v == 1.0
-        return ray_intersect_face(point .+ BIAS, nodeA, nodeB, nodeC)
-    end
-
-    # 已知射线与三角形平面的交点在三角形内（不包括边上），且射线起点不在三角形平面内。
-    return 1     
 end
 
-function pintriangle(point, node1, node2, node3)
-    B = dot(Dinv, cross(node2 - node1, node3 - node1))
-    if B == 0.
-        v = cross(D2, point - node1) / dot(D2, cross(node2 - node1, node3 - node1))
-    else
-        v = cross(Dinv, point - node1) / B
-    end
-    λ2 = dot(node3 - node1, v)
-    λ3 = - dot(node2 - node1, v)
-    return 0.0 ≤ λ2 ≤ 1.0 && 0.0 ≤ λ3 ≤ 1.0
-end
-
-function face_beyond_box_of_ray(point::NTuple{3, Float64}, nodeA::NTuple{3, Float64}, nodeB::NTuple{3, Float64}, nodeC::NTuple{3, Float64}) 
-
-    Y = minimum((nodeA[2], nodeB[2], nodeC[2])) <= point[2] <= maximum((nodeA[2], nodeB[2], nodeC[2]))
-
-    Z = minimum((nodeA[3], nodeB[3], nodeC[3])) <= point[3] <= maximum((nodeA[3], nodeB[3], nodeC[3]))
-
-    return !(Y && Z)
-end
-
-@inline function betweeneq(a::NTuple{dim,T}, lo::NTuple{dim,T}, hi::NTuple{dim,T}) where dim where T <: Real
-    return all(lo .≤ a .≤ hi)
+"Mixed product of three 3-vectors (a, b, c) = dot(a, cross(b,c)) where dot() and cross() are imported from LinearAlgebra"
+@inline function mixed_product(a::Vector{Float64},b::Vector{Float64},c::Vector{Float64})
+    return dot(a, cross(b, c))
 end
