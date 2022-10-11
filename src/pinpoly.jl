@@ -54,14 +54,13 @@ References
 [2] https://blog.csdn.net/u012138730/article/details/80235813
 
 """  
-function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{dim,Float64}}}, start::NTuple{dim,Float64}, stop::NTuple{dim,Float64}) where N where dim
-    
+function pinpoly(point::NTuple{dim,T}, faces::NTuple{N,NTuple{dim,NTuple{dim,T}}}, start::NTuple{dim,T}, stop::NTuple{dim,T}) where {dim,N} where T<:Real
     if dim == 1
         return pinsegment(point[1], start[1], stop[1])
     else
         c = 0
         if betweeneq(point, start, stop)
-            for (iface,face) in enumerate(faces)
+            for face in faces
                 # ray starting from +∞ and stoping at the point
                 intersection = ray_intersect_face(point, face...)
                 if intersection == 1  # face and the ray are intersected
@@ -77,12 +76,8 @@ function pinpoly(point::NTuple{dim,Float64}, faces::NTuple{N,NTuple{dim,NTuple{d
     end
 end
 
-@inline function betweeneq(a::NTuple{dim,Float64}, lo::NTuple{dim,Float64}, hi::NTuple{dim,Float64}) where dim
-    return all(lo .≤ a .≤ hi)
-end
-
 "1D intersection, return 1: intersected, 0: not intersected, -1: point just in face"
-function pinsegment(point::Float64, start::Float64, stop::Float64)
+function pinsegment(point::T, start::T, stop::T) where T <: Real
     if start < point < stop
         return 1
     elseif point == start || point == stop
@@ -143,6 +138,10 @@ function segment_intersect_face(p, q, a, b, c, normal)
 end
 
 "Mixed product of three 3-vectors (a, b, c) = dot(a, cross(b,c)) where dot() and cross() are imported from LinearAlgebra"
-@inline function mixed_product(a::Vector{Float64},b::Vector{Float64},c::Vector{Float64})
+@inline function mixed_product(a::Vector{T},b::Vector{T},c::Vector{T}) where T <: Real
     return dot(a, cross(b, c))
+end
+
+@inline function betweeneq(a::NTuple{dim,T}, lo::NTuple{dim,T}, hi::NTuple{dim,T}) where dim where T <: Real
+    return all(lo .≤ a .≤ hi)
 end
