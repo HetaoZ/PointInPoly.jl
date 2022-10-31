@@ -1,4 +1,4 @@
-const D = [1.0e10, 0., 0.]
+const D = rand(3) .* 1e10
 
 
 """
