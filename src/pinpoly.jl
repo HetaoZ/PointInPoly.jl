@@ -1,4 +1,4 @@
-const D = rand(3) .* 1e10
+const D = [0.919416, 0.014372, 0.] .* 1e8  # 限制在一个平面内
 # const D = [1.0e10, 0.45919416e-10, 0.51437296e-10]
 
 
@@ -108,6 +108,12 @@ end
 
 "[@ref] https://blog.csdn.net/u012138730/article/details/80235813"
 function segment_intersect_face(p, q, a, b, c, normal)
+    # check z coordinate
+    dza, dzb, dzc = signbit(a[3] - p[3]), signbit(b[3] - p[3]), signbit(c[3] - p[3])
+    if (dza && dzb && dzc) || (!dza && !dzb && !dzc)
+        return 0
+    end
+
     qp = p .- q  # p = point
     Δ = dot(qp, normal)
     if Δ == 0.
