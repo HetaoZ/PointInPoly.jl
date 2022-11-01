@@ -22,7 +22,8 @@ using Test
 
     # check
     for point in points
-        println(point[1], " => ", pinpoly(point[1], faces, start, stop)," (The correct answer is ", point[2],")")
+        q = pinpoly(point[1], faces, start, stop)
+        println(point[1], " => ", q," (", point[2]==q,")")
     end
 
     # 3D polyhedron
@@ -53,6 +54,7 @@ using Test
         )
 
     for point in points
-        println(point[1]," => ", pinpoly(point[1], faces, start, stop), " (The correct answer is ", point[2],")")
+        q = pinpoly(point[1], faces, start, stop)
+        println(point[1]," => ", q, " (", point[2]==q,")")
     end
 end
