@@ -109,6 +109,9 @@ end
 
 "[@ref] https://blog.csdn.net/u012138730/article/details/80235813"
 function segment_intersect_face(p, q, a, b, c, normal)
+
+    p[1] += 1e-8
+
     # check y and z coordinates
     y = [a[2],b[2],c[2]]
     z = [a[3],b[3],c[3]]
