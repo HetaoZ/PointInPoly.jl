@@ -21,7 +21,7 @@ using Test
             )
 
     # check
-    println("testing Points in Polygon")
+    println("Testing Points in Polygon")
     s1 = 0
     for point in points
         q = pinpoly(point[1], faces, start, stop)
@@ -30,7 +30,8 @@ using Test
             s1 += 1
         end
     end
-    println(length(points)-s1," points passed, ", s1," points failed")
+    println("summary:")
+    println("        ",length(points)-s1," points passed, ", s1," points failed")
 
 
 
@@ -62,7 +63,7 @@ using Test
         )
 
     println()
-    println("testing Points in Polyhedon")
+    println("Testing Points in Polyhedon")
     s2 = 0
     for point in points
         q = pinpoly(point[1], faces, start, stop)
@@ -72,6 +73,10 @@ using Test
         end
     end
 
-    println(length(points)-s2," points passed, ", s2," points failed")
+    println("summary:")
+    println("        ",length(points)-s2," points passed, ", s2," points failed")
 
+    if s1+s2 > 0
+        error("Some points failed!")
+    end
 end
