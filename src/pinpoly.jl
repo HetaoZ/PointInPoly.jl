@@ -1,4 +1,5 @@
-const D = [0.919416, 0.014372, 0.] .* 1e8  # 限制在一个平面内
+const D = [0.919416, 0., 0.] .* 1e8  # 限制在一个内
+# const D = [0.919416, 0.014372, 0.] .* 1e8  # 限制在一个平面内
 # const D = [1.0e10, 0.45919416e-10, 0.51437296e-10]
 
 
@@ -108,9 +109,12 @@ end
 
 "[@ref] https://blog.csdn.net/u012138730/article/details/80235813"
 function segment_intersect_face(p, q, a, b, c, normal)
-    # check z coordinate
-    dza, dzb, dzc = signbit(a[3] - p[3]), signbit(b[3] - p[3]), signbit(c[3] - p[3])
-    if (dza && dzb && dzc) || (!dza && !dzb && !dzc)
+    # check y and z coordinates
+    y = [a[2],b[2],c[2]]
+    z = [a[3],b[3],c[3]]
+    start = (minimum(y),minimum(z))
+    stop  = (maximum(y),maximum(z))
+    if !betweeneq(p, start, stop)
         return 0
     end
 
