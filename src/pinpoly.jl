@@ -115,9 +115,7 @@ function segment_intersect_face(p, q, a, b, c, normal)
     # check y and z coordinates
     y = [a[2],b[2],c[2]]
     z = [a[3],b[3],c[3]]
-    start = (minimum(y),minimum(z))
-    stop  = (maximum(y),maximum(z))
-    if !betweeneq(p, start, stop)
+    if !(minimum(y) ≤ p[2] ≤ maximum(y) &&  minimum(z) ≤ p[3] ≤ maximum(z))
         return 0
     end
 
@@ -156,6 +154,6 @@ end
     return dot(a, cross(b, c))
 end
 
-@inline function betweeneq(a, lo, hi)
+@inline function betweeneq(a::NTuple{dim,T}, lo::NTuple{dim,T}, hi::NTuple{dim,T}) where dim where T <: Real
     return all(lo .≤ a .≤ hi)
 end
