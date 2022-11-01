@@ -156,6 +156,6 @@ end
     return dot(a, cross(b, c))
 end
 
-@inline function betweeneq(a::NTuple{dim,T}, lo::NTuple{dim,T}, hi::NTuple{dim,T}) where dim where T <: Real
+@inline function betweeneq(a, lo, hi)
     return all(lo .≤ a .≤ hi)
 end
