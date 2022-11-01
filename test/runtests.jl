@@ -21,10 +21,18 @@ using Test
             )
 
     # check
+    println("testing Points in Polygon")
+    s1 = 0
     for point in points
         q = pinpoly(point[1], faces, start, stop)
         println(point[1], " => ", q," (", point[2]==q,")")
+        if point[2] != q
+            s1 += 1
+        end
     end
+    println(length(points)-s1," points passed, ", s1," points failed")
+
+
 
     # 3D polyhedron
 
@@ -53,8 +61,17 @@ using Test
         (( 1/4,  1/4,   1/2),   1)
         )
 
+    println()
+    println("testing Points in Polyhedon")
+    s2 = 0
     for point in points
         q = pinpoly(point[1], faces, start, stop)
         println(point[1]," => ", q, " (", point[2]==q,")")
+        if point[2] != q
+            s2 += 1
+        end
     end
+
+    println(length(points)-s2," points passed, ", s2," points failed")
+
 end
