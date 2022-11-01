@@ -1,4 +1,4 @@
-const D = rand(3) .* 1e10
+const D = [1.0e10, 0.45919416e-10, 0.51437296e-10]
 
 
 """
@@ -102,7 +102,7 @@ end
 function ray_intersect_face(point, a, b, c)
     point, a, b, c = collect.((point, a, b, c))
     normal = normalize(cross( b .- a, c .- a ))
-    return segment_intersect_face(point, D, a, b, c, normal)
+    return segment_intersect_face(point, point .+ D, a, b, c, normal)
 end
 
 "[@ref] https://blog.csdn.net/u012138730/article/details/80235813"

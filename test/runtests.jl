@@ -11,16 +11,18 @@ using Test
     stop = (1., 1.)
 
     # point
-    points = ((0.5, 0.2),
-            (-0.4, 0.3),
-            (0., 0.25),
-            (0.7, -1.1),
-            (0.1, 0.),
-            (1.0, 1.0))
+    points = (
+            ((0.5,  0.2), 1),
+            ((-0.4, 0.3), 0),
+            ((0.,  0.25), -1),
+            ((0.7, -1.1), 0),
+            ((0.1,   0.), -1),
+            ((1.0,  1.0), -1)
+            )
 
     # check
     for point in points
-        println(point, " => ", pinpoly(point, faces, start, stop))
+        println(point[1], " => ", pinpoly(point[1], faces, start, stop)," (The correct answer is ", point[2],")")
     end
 
     # 3D polyhedron
@@ -41,16 +43,16 @@ using Test
     stop = (1., 1., 1.)
 
     points = (
-        ( 0.1,  0.1,  0.01), 
-        ( 0.1,  0.1,    0.), 
-        ( 0.1,  0.1,  -0.1), 
-        (  0.,   0.,   0.5), 
-        (  0.,  0.1,   0.1), 
-        (  0.,   0.,   1.1),
-        ( 1/4,  1/4,   1/2),
+        (( 0.1,  0.1,  0.01),  1),
+        (( 0.1,  0.1,    0.),  -1),
+        (( 0.1,  0.1,  -0.1),  0),
+        ((  0.,   0.,   0.5),  -1),
+        ((  0.,  0.1,   0.1),  -1),
+        ((  0.,   0.,   1.1),   0),
+        (( 1/4,  1/4,   1/2),   1)
         )
 
     for point in points
-        println(point," => ", pinpoly(point, faces, start, stop))
+        println(point[1]," => ", pinpoly(point[1], faces, start, stop), " (The correct answer is ", point[2],")")
     end
 end
